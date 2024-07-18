@@ -7,6 +7,8 @@ import express, { NextFunction, Request, Response } from "express";
 import hpp from "hpp";
 import morgan from "morgan";
 import apiRoutes from "./routes";
+import { dbConnection } from "@/database";
+import "reflect-metadata";
 
 // initialize express instance
 const app = express();
@@ -32,5 +34,16 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 apiRoutes.forEach((route) => {
     app.use(prefix, route.router);
 });
+
+//connect to db
+dbConnection
+    .initialize()
+    .then(() => {
+        console.log("Connected to database");
+    })
+    .catch((error) => {
+        console.log("Error connecting to database");
+        console.log(error);
+    });
 
 export default app;

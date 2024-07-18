@@ -1,11 +1,22 @@
 import app from "./app";
 import * as http from "http";
 import { SERVER_HOST, SERVER_PORT, NODE_ENV } from "@/config";
+import { dbConnection } from "./database";
 
 const server = http.createServer(app);
 
 const gratefulShutdown = () => {
     console.log("Shutting down gracefully");
+    //close db
+    dbConnection
+        .destroy()
+        .then(() => {
+            console.log("Disconnected from database");
+        })
+        .catch((error) => {
+            console.log("Error disconnecting from database");
+            console.log(error);
+        });
 
     // close server
     server.close(() => {
