@@ -4,7 +4,7 @@ import { DataSource } from "typeorm";
 
 export const dbConnection = new DataSource({
     type: "sqlite",
-    database: "todolist",
+    database: "todolist.sqlite",
     entities: [ToDo],
     synchronize: true,
     logging: true,

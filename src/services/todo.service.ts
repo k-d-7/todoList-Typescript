@@ -1,7 +1,9 @@
 import { dbConnection } from "@/database";
+import { IToDo } from "@/interfaces/todo.interface";
 import { ToDo } from "@/models/todo.model";
 import { ToDoParams } from "@/params/params";
 import { isEmpty, isFormatDate } from "@/utils/validate";
+import { notEqual } from "assert";
 
 class ToDoService {
     private todoRepository = dbConnection.getRepository(ToDo);
@@ -10,12 +12,12 @@ class ToDoService {
             throw new Error("Invalid ToDo parameters");
         }
 
-        if (params.endDate != null) {
+        if (params.endDate != null && params.endDate != "") {
             if (!isFormatDate(params.endDate)) {
                 throw new Error("Invalid endDate format");
             }
 
-            if (params.startDate == null) {
+            if (params.startDate == null || params.startDate == "") {
                 throw new Error("Missing startDate");
             } else {
                 if (!isFormatDate(params.startDate)) {
@@ -30,7 +32,11 @@ class ToDoService {
             }
         }
 
-        if (params.startDate != null && !isFormatDate(params.startDate)) {
+        if (
+            params.startDate != null &&
+            params.startDate != "" &&
+            !isFormatDate(params.startDate)
+        ) {
             throw new Error("Invalid startDate format");
         }
 
@@ -58,8 +64,8 @@ class ToDoService {
         return todos;
     }
 
-    public async getToDosById(todoId: number): Promise<ToDo[]> {
-        const todos = await this.todoRepository.findBy({
+    public async getToDosById(todoId: number): Promise<ToDo> {
+        const todos = await this.todoRepository.findOneBy({
             id: todoId,
         });
         if (!todos) {
@@ -75,6 +81,11 @@ class ToDoService {
             throw new Error("Cannot find any ToDo");
         }
 
+        console.log("Todos: ", todos);
+        // console.log("All ToDo : " + todos);
+        // const result: IToDo[] = JSON.parse(JSON.stringify(todos));
+        // console.log("All todo: " + result);
+
         return todos;
     }
 
@@ -86,12 +97,12 @@ class ToDoService {
             throw new Error("Invalid ToDo parameters");
         }
 
-        if (params.endDate != null) {
+        if (params.endDate != null && params.endDate != "") {
             if (!isFormatDate(params.endDate)) {
                 throw new Error("Invalid endDate format");
             }
 
-            if (params.startDate == null) {
+            if (params.startDate == null || params.startDate == "") {
                 throw new Error("Missing startDate");
             } else {
                 if (!isFormatDate(params.startDate)) {
@@ -106,7 +117,11 @@ class ToDoService {
             }
         }
 
-        if (params.startDate != null && !isFormatDate(params.startDate)) {
+        if (
+            params.startDate != null &&
+            params.startDate != "" &&
+            !isFormatDate(params.startDate)
+        ) {
             throw new Error("Invalid startDate format");
         }
 
@@ -136,7 +151,11 @@ class ToDoService {
             throw new Error("Cannot find ToDo by id " + todoId);
         }
 
-        await this.todoRepository.delete(todo);
+        await this.todoRepository
+            .createQueryBuilder()
+            .delete()
+            .where("id = :id", { id: todoId })
+            .execute();
         return todo.name;
     }
 }

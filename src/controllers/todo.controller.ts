@@ -1,3 +1,4 @@
+import { IToDo } from "@/interfaces/todo.interface";
 import { ToDo } from "@/models/todo.model";
 import { ToDoParams } from "@/params/params";
 import ToDoService from "@/services/todo.service";
@@ -48,7 +49,10 @@ export default class ToDoController {
     ) => {
         try {
             const todoId: number = parseInt(req.params.id);
-            const todos: ToDo[] = await this.todoService.getToDosById(todoId);
+            const todos: ToDo = await this.todoService.getToDosById(todoId);
+
+            console.log(todos);
+
             res.status(200).json({
                 data: todos,
                 message: "ToDo is retrieved successfully",
@@ -65,6 +69,10 @@ export default class ToDoController {
     ) => {
         try {
             const todos: ToDo[] = await this.todoService.getAllToDos();
+
+            console.log("Get all todos : ");
+            console.log(todos);
+
             res.status(200).json({
                 data: todos,
                 message: "ToDos are retrieved successfully",

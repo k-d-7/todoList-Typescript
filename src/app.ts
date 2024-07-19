@@ -9,6 +9,7 @@ import morgan from "morgan";
 import apiRoutes from "./routes";
 import { dbConnection } from "@/database";
 import "reflect-metadata";
+import { ToDo } from "./models/todo.model";
 
 // initialize express instance
 const app = express();
